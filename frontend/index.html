@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura Expenses - Premium Tracker</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Local CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast hidden"></div>
+
+    <!-- Auth Section (Login/Signup) -->
+    <div id="auth-view" class="view-container">
+        <div class="auth-card glass-panel">
+            <div class="logo">
+                <i class="fa-solid fa-leaf"></i>
+                <h2>Aura Tracker</h2>
+            </div>
+            
+            <div class="tabs">
+                <button class="tab-btn active" id="tab-login">Login</button>
+                <button class="tab-btn" id="tab-signup">Sign Up</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form" class="auth-form active">
+                <div class="input-group">
+                    <label><i class="fa-solid fa-user"></i> Username</label>
+                    <input type="text" id="login-username" required>
+                </div>
+                <div class="input-group">
+                    <label><i class="fa-solid fa-lock"></i> Password</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit" class="btn-primary">Enter Dashboard</button>
+            </form>
+
+            <!-- Signup Form -->
+            <form id="signup-form" class="auth-form hidden">
+                <div class="input-group">
+                    <label><i class="fa-solid fa-user"></i> Username</label>
+                    <input type="text" id="signup-username" required>
+                </div>
+                <div class="input-group">
+                    <label><i class="fa-solid fa-envelope"></i> Email</label>
+                    <input type="email" id="signup-email" required>
+                </div>
+                <div class="input-group">
+                    <label><i class="fa-solid fa-lock"></i> Password</label>
+                    <input type="password" id="signup-password" required>
+                </div>
+                <button type="submit" class="btn-primary">Create Account</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard Section -->
+    <div id="dashboard-view" class="view-container hidden">
+        
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar glass-panel">
+            <div class="logo">
+                <i class="fa-solid fa-leaf"></i>
+                <h2>Aura</h2>
+            </div>
+            <ul class="nav-links">
+                <li class="active"><a href="#"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+                <li><a href="#" id="open-transaction-modal"><i class="fa-solid fa-plus-circle"></i> Add Transaction</a></li>
+                <li><a href="#" id="logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <header class="topbar">
+                <div>
+                    <h1 id="greeting">Hello, User</h1>
+                    <p class="subtitle">Here is your financial summary.</p>
+                </div>
+                <div class="profile-icon">
+                    <i class="fa-solid fa-user-circle"></i>
+                </div>
+            </header>
+
+            <!-- Summary Cards -->
+            <section class="summary-cards">
+                <div class="card glass-panel balance-card">
+                    <div class="card-icon"><i class="fa-solid fa-wallet"></i></div>
+                    <div class="card-info">
+                        <h3>Total Balance</h3>
+                        <h2 id="total-balance">$0.00</h2>
+                    </div>
+                </div>
+                <div class="card glass-panel income-card">
+                    <div class="card-icon"><i class="fa-solid fa-arrow-trend-up"></i></div>
+                    <div class="card-info">
+                        <h3>Incoming</h3>
+                        <h2 id="total-income">+$0.00</h2>
+                    </div>
+                </div>
+                <div class="card glass-panel expense-card">
+                    <div class="card-icon"><i class="fa-solid fa-arrow-trend-down"></i></div>
+                    <div class="card-info">
+                        <h3>Outgoing</h3>
+                        <h2 id="total-expense">-$0.00</h2>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Main Split Layout -->
+            <section class="dashboard-split">
+                
+                <!-- Transactions List -->
+                <div class="transactions-container glass-panel">
+                    <div class="section-header">
+                        <h3>Recent Transactions</h3>
+                        <button class="btn-icon"><i class="fa-solid fa-filter"></i></button>
+                    </div>
+                    <div class="transactions-list" id="transactions-list">
+                        <!-- Transactions injected by JS -->
+                        <div class="empty-state">No transactions yet. Start adding!</div>
+                    </div>
+                </div>
+
+                <!-- Budget Overview (Phase 3 functionality) -->
+                <div class="budgets-container glass-panel">
+                    <div class="section-header">
+                        <h3>Budgets</h3>
+                        <button id="open-budget-modal" class="btn-icon" title="Set Budget"><i class="fa-solid fa-plus-circle"></i></button>
+                    </div>
+                    <div class="budget-list" id="budget-list">
+                        <!-- Budgets injected by JS -->
+                        <div class="empty-state">No budgets set.</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Add Transaction Modal -->
+    <div id="transaction-modal" class="modal hidden">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h2>Add Transaction</h2>
+                <button class="close-btn" id="close-modal"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <form id="transaction-form">
+                <div class="form-row">
+                    <div class="input-group">
+                        <label>Type</label>
+                        <select id="t-type" required>
+                            <option value="EXPENSE">Expense</option>
+                            <option value="INCOME">Income</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Amount</label>
+                        <input type="number" step="0.01" id="t-amount" placeholder="0.00" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="input-group">
+                        <label>Category</label>
+                        <input type="text" id="t-category" placeholder="E.g. Food, Salary..." required>
+                    </div>
+                    <div class="input-group">
+                        <label>Date</label>
+                        <input type="date" id="t-date" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Description (Optional)</label>
+                    <input type="text" id="t-description" placeholder="Brief note...">
+                </div>
+
+                <!-- Advanced Options Toggle -->
+                <details class="advanced-options">
+                    <summary>More Options (Location, Tags, Receipt)</summary>
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label>Payment Method</label>
+                            <select id="t-payment">
+                                <option value="Card">Card</option>
+                                <option value="Cash">Cash</option>
+                                <option value="UPI">UPI / Bank Transfer</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Location</label>
+                            <input type="text" id="t-location" placeholder="Where did this happen?">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Tags (Comma separated)</label>
+                        <input type="text" id="t-tags" placeholder="urgent, monthly, recurring">
+                    </div>
+                    <div class="input-group">
+                        <label>Receipt Upload</label>
+                        <input type="file" id="t-receipt" accept="image/*">
+                    </div>
+                </details>
+
+                <button type="submit" class="btn-primary" style="margin-top: 20px; width: 100%;">Save Transaction</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Budget Modal -->
+    <div id="budget-modal" class="modal hidden">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h2>Set Budget</h2>
+                <button class="close-btn" id="close-budget-modal"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <form id="budget-form">
+                <div class="form-row">
+                    <div class="input-group">
+                        <label>Category</label>
+                        <input type="text" id="b-category" placeholder="E.g. Food, Bills" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Limit Amount</label>
+                        <input type="number" step="0.01" id="b-amount" placeholder="0.00" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="input-group">
+                        <label>Month</label>
+                        <input type="number" id="b-month" min="1" max="12" placeholder="MM" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Year</label>
+                        <input type="number" id="b-year" placeholder="YYYY" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" style="margin-top: 10px; width: 100%;">Save Budget</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
