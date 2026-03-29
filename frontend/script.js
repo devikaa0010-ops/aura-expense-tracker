@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:8080/api';
+const API_BASE = 'https://aura-expense-api.onrender.com/api';
 let authToken = localStorage.getItem('aura_token');
 let currentUser = null;
 
